@@ -62,3 +62,8 @@ Add to the top-level of your nginx configuration file:
 openssl_version_minimum 1.0.1g;
 ```
 
+
+License
+-------
+
+MIT License, see [LICENSE](LICENSE).
