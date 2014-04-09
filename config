@@ -1,0 +1,4 @@
+ngx_addon_name=ngx_openssl_version_module
+CORE_MODULES="$CORE_MODULES ngx_openssl_version_module"
+USE_OPENSSL=YES
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_openssl_version_module.c"
