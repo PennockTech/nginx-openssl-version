@@ -62,6 +62,34 @@ Add to the top-level of your nginx configuration file:
 openssl_version_minimum 1.0.1g;
 ```
 
+If you are unlucky, your OS vendor has given you an updated OpenSSL package
+which has no identifying information in the embedded version.  In such a
+scenario, the best you can work with is the timestamp at which OpenSSL was
+built.  This does at least ensure that if you have a fleet of machines which
+get the same package, nginx will be protected against machines which missed
+the OS package update (but do get the updated nginx binary).
+
+Get the build date:
+
+```console
+$ openssl version -b
+built on: Mon Apr  7 15:08:30 PDT 2014
+```
+
+Then configure at the top-level of your nginx configuration file:
+
+```
+openssl_builddate_minimum "Mon Apr  7 15:08:30 PDT 2014";
+```
+
+There is no attempt in this code to be flexible in date parsing formats; you
+should use the exact output from your known-good version of OpenSSL as the
+configuration value.  Because of portability issues around timezone labels,
+the timezone portion will be ignored for comparison purposes.  Really, truly,
+just copy&paste the output, anything else will fail.
+
+If both minimum options are set, both will be applied -- each must pass.
+
 
 License
 -------
