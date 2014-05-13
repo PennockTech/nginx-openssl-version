@@ -116,6 +116,31 @@ ngx_openssl_version_create_conf(ngx_cycle_t *cycle)
     return ovcf;
 }
 
+static u_char *
+dup_ngx_str_to_nulterm_cstring(ngx_pool_t *pool, ngx_str_t *src)
+{
+    // ngx_pstrdup() doesn't add space for a NUL, and we don't know for
+    // sure whether the ngx_str_t includes a trailing NUL -- in nginx, it
+    // varies by context and callers are expected to know.  We can't safely
+    // just bump the .len temporarily, because the src might be allocated at
+    // the end of a region of allocated address-space.
+    //
+    // So this is based on the internals of ngx_pstrdup(), but ensuring NUL
+    // termination.
+
+    u_char *dst;
+
+    dst = ngx_pnalloc(pool, src->len + 1);
+    if (dst == NULL) {
+        return NULL;
+    }
+
+    ngx_memcpy(dst, src->data, src->len);
+    dst[src->len] = '\0';
+
+    return dst;
+}
+
 static long
 parse_openssl_version(ngx_str_t *minimum_str, const char **error)
 {
@@ -266,7 +291,7 @@ parse_openssl_builddate(ngx_pool_t *pool, ngx_str_t *orig_minimum_str, int flags
     }
 
     /* ensure NUL termination before parsing to libc, and mangle private copy */
-    input = ngx_pstrdup(pool, &min);
+    input = dup_ngx_str_to_nulterm_cstring(pool, &min);
 
     /* get rid of timezone information which libc won't reliably parse */
     if (isdigit(input[18]) && isdigit(input[24]) && isspace(input[19]) && isspace(input[23])) {
