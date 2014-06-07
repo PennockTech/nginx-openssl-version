@@ -99,7 +99,7 @@ main(int argc, char *argv[])
       printf("[%d] ! parse error \"%s\": %s\n", i, argv[i], err);
       continue;
     }
-    printf("[%d] \"%s\" = %#0lx\n", i, argv[i], version);
+    printf("[%d] \"%s\" = %#010lx\n", i, argv[i], version);
   }
 }
 

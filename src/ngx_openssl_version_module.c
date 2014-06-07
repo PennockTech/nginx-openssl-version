@@ -154,6 +154,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
     unsigned int want_patch = 0;
     const unsigned int want_status = 0x0F; /* release */
     int in_section = 0;
+    int extended_patch = 0;
     unsigned int *current_int;
     u_char *p, *endp;
 
@@ -201,7 +202,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
             *error = "OpenSSL version missing a section";
             return 0L;
         }
-        if (in_section == 3) {
+        if (in_section == 3 && !extended_patch) {
             *error = "OpenSSL version has bad patch section";
             return 0L;
         }
@@ -210,7 +211,17 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
             *error = "OpenSSL version has unparseable patch level";
             return 0L;
         }
-        want_patch = (*p | 0x20) - 'a' + 1;
+        want_patch += (*p | 0x20) - 'a' + 1;
+        /*
+         * Here we are into undocumented territory.
+         * 0.9.8 went a..y and y was followed by za.
+         */
+        if (*p == 'z') {
+            want_patch -= 1;
+            extended_patch = 1;
+        } else {
+            extended_patch = 0;
+        }
     }
 
     /* We allow empty fix, and empty minor, so can say "1.1". */
