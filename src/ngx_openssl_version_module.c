@@ -19,11 +19,13 @@
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 
+// START:EXTRACT:parse_openssl_version (for testing)
 /*
  * If a version number component is more than this, then it's likely someone
  * trying to attack us with an overflow.
  */
 #define MAX_OSSLVER_COMPONENT 256
+// END:EXTRACT:parse_openssl_version (for testing)
 
 /*
  * Tuning for parsing builddates
@@ -141,6 +143,7 @@ dup_ngx_str_to_nulterm_cstring(ngx_pool_t *pool, ngx_str_t *src)
     return dst;
 }
 
+// START:EXTRACT:parse_openssl_version (for testing)
 static long
 parse_openssl_version(ngx_str_t *minimum_str, const char **error)
 {
@@ -233,6 +236,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
 
     return want_version;
 }
+// END:EXTRACT:parse_openssl_version (for testing)
 
 #ifdef NGX_OPENSSL_WANT_DATEHANDLING
 static time_t
