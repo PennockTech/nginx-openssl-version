@@ -19,11 +19,13 @@
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 
+// START:EXTRACT:parse_openssl_version (for testing)
 /*
  * If a version number component is more than this, then it's likely someone
  * trying to attack us with an overflow.
  */
 #define MAX_OSSLVER_COMPONENT 256
+// END:EXTRACT:parse_openssl_version (for testing)
 
 /*
  * Tuning for parsing builddates
@@ -141,6 +143,7 @@ dup_ngx_str_to_nulterm_cstring(ngx_pool_t *pool, ngx_str_t *src)
     return dst;
 }
 
+// START:EXTRACT:parse_openssl_version (for testing)
 static long
 parse_openssl_version(ngx_str_t *minimum_str, const char **error)
 {
@@ -151,6 +154,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
     unsigned int want_patch = 0;
     const unsigned int want_status = 0x0F; /* release */
     int in_section = 0;
+    int extended_patch = 0;
     unsigned int *current_int;
     u_char *p, *endp;
 
@@ -198,7 +202,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
             *error = "OpenSSL version missing a section";
             return 0L;
         }
-        if (in_section == 3) {
+        if (in_section == 3 && !extended_patch) {
             *error = "OpenSSL version has bad patch section";
             return 0L;
         }
@@ -207,7 +211,17 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
             *error = "OpenSSL version has unparseable patch level";
             return 0L;
         }
-        want_patch = (*p | 0x20) - 'a' + 1;
+        want_patch += (*p | 0x20) - 'a' + 1;
+        /*
+         * Here we are into undocumented territory.
+         * 0.9.8 went a..y and y was followed by za.
+         */
+        if (*p == 'z') {
+            want_patch -= 1;
+            extended_patch = 1;
+        } else {
+            extended_patch = 0;
+        }
     }
 
     /* We allow empty fix, and empty minor, so can say "1.1". */
@@ -233,6 +247,7 @@ parse_openssl_version(ngx_str_t *minimum_str, const char **error)
 
     return want_version;
 }
+// END:EXTRACT:parse_openssl_version (for testing)
 
 #ifdef NGX_OPENSSL_WANT_DATEHANDLING
 static time_t
