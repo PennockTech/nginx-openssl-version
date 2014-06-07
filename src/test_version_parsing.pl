@@ -8,7 +8,9 @@ my $test_bin = 'drive_version_parsing';
 my @versions = (
 	[ "1.0.1h", "0x1000108f" ],
 	[ "1.0.0m", "0x100000df" ],
+	[ "0.9.8y", "0x0090819f" ],
 	[ "0.9.8za", "0x009081af" ],
+	[ "0.9.8zb", "0x009081bf" ], # future prediction
 # When we support non-final: 1.0.0n-dev -> 0x100000e0
 );
 
