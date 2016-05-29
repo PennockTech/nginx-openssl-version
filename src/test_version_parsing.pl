@@ -6,6 +6,8 @@ my $code_src = 'ngx_openssl_version_module.c';
 my $test_out = 'drive_version_parsing.c';
 my $test_bin = 'drive_version_parsing';
 my @versions = (
+	[ "1.1.0a", "0x1010001f" ],
+	[ "1.1.0", "0x1010000f" ],
 	[ "1.0.1h", "0x1000108f" ],
 	[ "1.0.0m", "0x100000df" ],
 	[ "0.9.8y", "0x0090819f" ],
