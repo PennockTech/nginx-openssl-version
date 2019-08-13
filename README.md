@@ -45,7 +45,7 @@ $ cd .../path/to/nginx
 $ ./configure \
     --prefix=/where/ever \
     --with-http_ssl_module \
-    --add-module=$REPO_SRC/github.com/apcera/nginx-openssl-version \
+    --add-module=$REPO_SRC/github.com/PennockTech/nginx-openssl-version \
     --with-ld-opt='-L../openssl-1.0.1g -Wl,-Bstatic -lssl -lcrypto -Wl,-Bdynamic -ldl' \
     --with-openssl=../openssl-1.0.1g
 ```
