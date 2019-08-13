@@ -5,6 +5,7 @@ This module causes nginx to write out the runtime version of OpenSSL to the
 error log on start-up.  It also adds a directive to the global nginx
 configuration, letting you set a minimum version of OpenSSL.
 
+(I wrote this at a former employer, Apcera.  It was open sourced, but disappeared without notice around 2019-08-13.  This fork was created before that; to the extent that I wrote all the code, I guess that the canonical upstream repo is now <https://github.com/PennockTech/nginx-openssl-version>.)
 
 Why?
 ----
